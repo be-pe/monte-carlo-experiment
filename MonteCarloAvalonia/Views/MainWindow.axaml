@@ -1,0 +1,67 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MonteCarloAvalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        SizeToContent="WidthAndHeight"
+        x:Class="MonteCarloAvalonia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        x:CompileBindings="True"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Monte Carlo Experiment">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="Auto,*">
+        <WrapPanel Grid.Column="1" Margin="25 25" Orientation="Vertical">
+            <WrapPanel Orientation="Horizontal" Margin="0 25">
+                <TextBlock VerticalAlignment="Center">Sample size:</TextBlock>
+                <NumericUpDown Minimum="0" Increment="1000" MinWidth="150" Margin="25 0"
+                               Value="{Binding SampleSize, Mode=TwoWay}" />
+            </WrapPanel>
+            <Button Command="{Binding SimulateCommand}" HorizontalAlignment="Center">Simulate</Button>
+            
+            <TextBlock HorizontalAlignment="Center" Margin="0 25" TextWrapping="Wrap"
+                       Text="{Binding SampleText, Mode=OneWay}" />
+            <TextBlock HorizontalAlignment="Center" Margin="0 25" TextWrapping="Wrap"
+                       Text="{Binding PiText, Mode=OneWay}" />
+        </WrapPanel>
+
+        <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" Margin="24">
+            <Canvas Height="{Binding Size}" Width="{Binding Size}">
+                <ItemsControl ItemsSource="{Binding Points}" Height="{Binding Size}" Width="{Binding Size}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.Styles>
+                        <Style Selector="ItemsControl > ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding X, DataType=vm:PointData}" />
+                            <Setter Property="Canvas.Bottom" Value="{Binding Y, DataType=vm:PointData}" />
+                        </Style>
+                    </ItemsControl.Styles>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Ellipse Height="1" Width="1" Fill="{Binding Fill}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Path Stroke="Black" StrokeThickness="1">
+                    <Path.Data>
+                        <PathGeometry>
+                            <PathFigure StartPoint="0,0" IsClosed="False">
+                                <ArcSegment Size="500,500" Point="500,500" RotationAngle="90"/>
+                            </PathFigure>
+                        </PathGeometry>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Border>
+    </Grid>
+</Window>
